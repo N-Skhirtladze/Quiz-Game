@@ -13,27 +13,18 @@ let score = 0;
 const points = document.querySelector('.pt');
 const answers = document.querySelectorAll('.answer');
 let check = false;
+let data;
+let random;
 
-async function firstQuestion() {
+async function questionDisplay() {
   try {
     let api = await fetch(URL);
     if (api.ok) {
-      let data = await api.json();
-      // while (count < 10) {
-      answers.forEach((answer) => {
-        answer.style.color = '#4e342e'
-      });
-      console.log(data.results[count]);
-      questionAmount.innerHTML = `${count + 1}/10`;
-      difficultyOfQuestion(data, difficulty);
-      question.innerHTML = `${data.results[count].question}`
-      const random = Math.floor(Math.random() * (4 - 1) + 1);
+      data = await api.json();
+      console.log("length of data keys: " + Object.keys(data.results).length);
+      eachQuestion()
       console.log(random);
-      correct_incorrect(random, data, count, first, second, third, fourth);
-      detectAnswer(random, answers, indexDetection, data.results[count].difficulty);
-
-      count++;
-      // }
+      detectAnswer(answers, indexDetection, data);
     } else {
       throw new Error('something gose wrong!');
     }
@@ -44,17 +35,25 @@ async function firstQuestion() {
 
 
 }
+questionDisplay();
 
-async function loop() {
-  while (count < 10) {
-    await firstQuestion();
-    
-    await new Promise(res => setTimeout(res, 7000));
-  }
+function eachQuestion() {
+  check = false;
+  answers.forEach((answer) => {
+    answer.style.color = '#4e342e'
+  });
+  console.log(data.results[count]);
+  questionAmount.innerHTML = `${count + 1}/10`;
+  difficultyOfQuestion(data, difficulty);
+  question.innerHTML = `${data.results[count].question}`;
+  let rand = Math.floor(Math.random() * (4 - 1 + 1) + 1);
+  random = rand;
+  console.log(random);
+  console.log(rand);
+
+  correct_incorrect(rand, data, count, first, second, third, fourth);
+  // count++;
 }
-
-loop();
-
 
 function difficultyOfQuestion(data, dif) {
   let difficulty = data.results[count].difficulty;
@@ -110,21 +109,34 @@ const scoreSystem = {
   ['EASY']: 50
 };
 
-function detectAnswer(rand, answers, index, dif) {
+async function detectAnswer(answers, index, data) {
+
   answers.forEach((answer) => {
     answer.addEventListener('click', (event) => {
+      
+
       check = true;
       let element = event.target;
       console.log(element.classList[1]);
-      if (index[rand - 1] == element.classList[1]) {
+
+
+      let dif = data.results[count].difficulty;
+      console.log(dif);
+      if (index[random - 1] == element.classList[1]) {
         element.style.color = "#6b8e23";
         score += scoreSystem[dif.toUpperCase()];
         points.innerHTML = `Point: ${score}`;
 
       } else {
         element.style.color = "#a0522d";
-        document.querySelector(`.${index[rand - 1]}`).style.color = '#6b8e23';
+        document.querySelector(`.${index[random - 1]}`).style.color = '#6b8e23';
       }
+      if (Object.keys(data.results).length - 1 > count) {
+        setTimeout(eachQuestion, 2000);
+        count++;
+
+      }
+      
     });
   });
 }
