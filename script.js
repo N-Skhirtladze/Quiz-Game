@@ -1,6 +1,7 @@
-const URL = "https://opentdb.com/api.php?amount=10&type=multiple";
+let URL = "https://opentdb.com/api.php?amount=10&type=multiple";
 
 const questionAmount = document.querySelector('.question-amount');
+let newQuestions = [];
 const difficulty = document.querySelector('.span');
 const question = document.querySelector('.question-div p');
 let count = 0;
@@ -15,34 +16,65 @@ const answers = document.querySelectorAll('.answer');
 let check = false;
 let data;
 let random;
+const gameSetting = document.querySelector('.start-game');
+const play = document.querySelector('.start');
+
+play.addEventListener('click', (e) => {
+  e.preventDefault();
+  const obj = new FormData(gameSetting);
+
+  const settings = Object.fromEntries(obj.entries());
+  console.log(settings);
+  changeURL(settings);
+  console.log(URL);
+  main.style.display = 'block';
+  header.style.display = 'flex';
+  gameSetting.style.display = 'none';
+  questionDisplay();
+})
+
+function changeURL(formData){
+  for (const key in formData) {
+    if(formData[key] != ""){
+      URL += `&${key}=${formData[key]}`;
+      console.log(key);
+      console.log(formData[key]);
+    }
+  }
+}
 
 async function questionDisplay() {
   try {
     let api = await fetch(URL);
     if (api.ok) {
       data = await api.json();
-      console.log("length of data keys: " + Object.keys(data.results).length);
+      newQuestions.push(...data.results);
+      console.log(newQuestions);
+      points.innerHTML = `Point: ${score}`;
+      console.log("length of data keys: " + Object.keys(newQuestions).length);
       eachQuestion()
       console.log(random);
-      detectAnswer(answers, indexDetection, data);
+      
+      detectAnswer(answers, indexDetection, newQuestions);
     } else {
       throw new Error('something gose wrong!');
     }
 
   } catch (error) {
     console.log(error);
+    // alert(error)
   }
 
 
 }
-questionDisplay();
+// questionDisplay();
 
 function eachQuestion() {
   check = false;
   answers.forEach((answer) => {
     answer.style.color = '#4e342e'
   });
-  console.log(data.results[count]);
+  // console.log(data.results[count]);
   questionAmount.innerHTML = `${count + 1}/10`;
   difficultyOfQuestion(data, difficulty);
   question.innerHTML = `${data.results[count].question}`;
@@ -109,35 +141,59 @@ const scoreSystem = {
   ['EASY']: 50
 };
 
-async function detectAnswer(answers, index, data) {
+const main = document.querySelector('main');
+const header = document.querySelector('header');
+const restart = document.querySelector('.restart');
+const endGame = document.querySelector('.end-game');
+
+function detectAnswer(answers, index, data) {
 
   answers.forEach((answer) => {
     answer.addEventListener('click', (event) => {
-      
-
+      if (check) return;
       check = true;
       let element = event.target;
       console.log(element.classList[1]);
 
+      console.log("Clicked question: ", data[count].question);
 
-      let dif = data.results[count].difficulty;
+      let dif = data[count].difficulty;
       console.log(dif);
       if (index[random - 1] == element.classList[1]) {
         element.style.color = "#6b8e23";
         score += scoreSystem[dif.toUpperCase()];
         points.innerHTML = `Point: ${score}`;
-
       } else {
         element.style.color = "#a0522d";
         document.querySelector(`.${index[random - 1]}`).style.color = '#6b8e23';
       }
-      if (Object.keys(data.results).length - 1 > count) {
+      if (Object.keys(data).length - 1 > count) {
         setTimeout(eachQuestion, 2000);
         count++;
+      } else {
+        setTimeout(() => {
+          main.style.display = 'none';
+          header.style.display = 'none';
+          endGame.style.display = 'flex';
+          yourScore.innerText = `YOUR SCORE: ${score}`;
+        }, 2000);
 
       }
-      
+
     });
   });
 }
+
+
+const yourScore = document.querySelector('.your-score');
+restart.addEventListener('click', () => {
+  main.style.display = 'block';
+  header.style.display = 'flex';
+  endGame.style.display = 'none';
+  count = 0;
+  score = 0;
+  newQuestions = [];
+  console.log(count);
+  questionDisplay();
+})
 

@@ -14,33 +14,60 @@
 </head>
 
 <body>
-    <header>
+    <header style="display: none;">
         <div class="questions">
             <img src="images/question.png" alt="" style="width: 25px">
             <p class="question-amount">/10</p>
         </div>
         <p class="difficulty">Difficulty: <span class="span"></span></p>
-        <p class="pt">Point: 0</p>
+        <p class="pt">Point: </p>
     </header>
-    <main>
-        <div class="question-div">
-            <p></p>
-        </div>
-        <div class="answers">
-            <p class="answer first"></p>
-            <p class="answer second"></p>
-            <p class="answer third"></p>
-            <p class="answer fourth"></p>
-        </div>
-        <div class="info">
-            <img src="images/info.png" alt="" width="25px">
-            <div class="rules">
-                <p><span style="color: green;">EASY</span>: 50pt</p>
-                <p><span style="color: yellow;">MEDIUM</span>: 100pt</p>
-                <p><span style="color: red;">HARD</span>: 150pt</p>
+    <main style="display: none;">
+        <div class="none">
+            <div class="question-div">
+                <p></p>
+            </div>
+            <div class="answers">
+                <p class="answer first"></p>
+                <p class="answer second"></p>
+                <p class="answer third"></p>
+                <p class="answer fourth"></p>
             </div>
         </div>
+
     </main>
+    <div class="info">
+        <img src="images/info.png" alt="" width="25px">
+        <div class="rules">
+            <p><span style="color: green;">EASY</span>: 50pt</p>
+            <p><span style="color: yellow;">MEDIUM</span>: 100pt</p>
+            <p><span style="color: red;">HARD</span>: 150pt</p>
+        </div>
+    </div>
+    <div class="end-game" style="display: none;">
+        <p class="your-score">YOUR SCORE: 0</p>
+        <button class="restart">Try Again<img src="images/restart.png" alt="" style="width: 25px;"></button>
+    </div>
+    <form action="" class="start-game">
+        <label for="category-sel">Select Category:</label>
+        <select name="category" id="category-sel">
+            <option value="" selected>Any Category</option>
+            <option value="11">Film</option>
+            <option value="12">Music</option>
+            <option value="21">Sports</option>
+            <option value="28">Vehicles</option>
+            <option value="23">History</option>
+        </select>
+        <label for="difficulty-sel">Select Difficulty:</label>
+        <select name="difficulty" id="difficulty-sel">
+            <option value="" selected>Any Difficulty</option>
+            <option value="easy">Easy</option>
+            <option value="medium">Medium</option>
+            <option value="hard">Hard</option>
+        </select>
+        <button type="submit" class="start">Play <img src="images/play.png" alt="" style="width: 25px;"></button>
+    </form>
+
     <script src="script.js"></script>
 </body>
 
